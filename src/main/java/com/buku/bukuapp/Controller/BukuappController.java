@@ -1,12 +1,18 @@
-package com.buku.bukuapp;
+package com.buku.bukuapp.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.buku.bukuapp.Model.BukuappModel;
+import com.buku.bukuapp.Repository.BukuappRepository;
 
 @Controller
 public class BukuappController {
@@ -14,7 +20,12 @@ public class BukuappController {
     private BukuappRepository bukuappRepository;
 
     @GetMapping("/")
-    public String beranda() {
+    public String beranda(@RequestParam(defaultValue = "1") int page, Model model) {
+        int pageSize = 10; // Jumlah data per halaman
+        Page<BukuappModel> bukuPage = bukuappRepository.findAll(PageRequest.of(page - 1, pageSize));
+        model.addAttribute("daftarbuku", bukuPage.getContent());
+        model.addAttribute("currentPage", page);
+        model.addAttribute("totalPages", bukuPage.getTotalPages());
         return "index";
     }
 
@@ -48,6 +59,7 @@ public class BukuappController {
         return "tampilbuku";
     }
 
+    
     @GetMapping("/tampilbuku")
     public String tampilkanBuku(Model model) {
         model.addAttribute("daftarbuku", bukuappRepository.findAll());

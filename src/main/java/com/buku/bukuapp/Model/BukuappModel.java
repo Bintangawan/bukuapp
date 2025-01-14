@@ -1,4 +1,4 @@
-package com.buku.bukuapp;
+package com.buku.bukuapp.Model;
 
 import javax.validation.constraints.NotBlank;
 
