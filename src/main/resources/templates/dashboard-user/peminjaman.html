@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peminjaman Buku</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #2c2f33;
+        font-weight: bold;
+        color: #ffffff;
+      }
+
+      .sidebar {
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 250px;
+        background-color: #23272a;
+        padding-top: 20px;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+      }
+
+      .sidebar h3 {
+        text-align: center;
+        color: #ffffff;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .sidebar a {
+        color: #ffffff;
+        text-decoration: none;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        border-radius: 4px;
+        margin: 5px 0;
+        transition: background-color 0.3s, transform 0.3s;
+        font-weight: bold;
+      }
+
+      .sidebar a:hover {
+        background-color: #7289da;
+        transform: translateX(5px);
+      }
+
+      .sidebar a i {
+        margin-right: 15px;
+        font-size: 1.2rem;
+      }
+
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+
+      .navbar {
+        background-color: #23272a;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        padding: 5px 20px;
+      }
+
+      .navbar-text {
+        display: flex;
+        align-items: center;
+        border-radius: 10px;
+        padding: 5px 30px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        font-weight: bold;
+      }
+
+      .navbar-text i {
+        margin-right: 7px;
+        font-size: 1.2rem;
+      }
+
+      .card {
+        background-color: #202225;
+        border-radius: 10px;
+        border: none;
+        transition: transform 0.3s, box-shadow 0.3s;
+        font-weight: bold;
+      }
+
+      .card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+      }
+
+      .card-title {
+        color: #ffffff;
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .table {
+        background-color: #ffffff; /* Warna latar tabel */
+        color: #343a40; /* Warna teks tabel */
+        border-radius: 8px; /* Membuat sudut tabel sedikit melengkung */
+        overflow: hidden;
+      }
+
+      .table th,
+      .table td {
+        text-align: center;
+        vertical-align: middle;
+      }
+
+      .table-hover tbody tr:hover {
+        background-color: #f8f9fa; /* Warna latar saat baris di-hover */
+      }
+
+      .badge {
+        padding: 5px 10px;
+        font-size: 0.9rem;
+        border-radius: 12px;
+      }
+
+      .bg-warning {
+        background-color: #ffc107 !important;
+        color: #343a40;
+      }
+
+      .bg-success {
+        background-color: #198754 !important;
+        color: #ffffff;
+      }
+      .btn-custom {
+        background: linear-gradient(
+          135deg,
+          #7289da,
+          #5b6eae
+        ); /* Warna gradient */
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        color: #ffffff;
+        font-weight: bold;
+        text-transform: uppercase;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      }
+
+      .btn-custom:hover {
+        background: linear-gradient(
+          135deg,
+          #5b6eae,
+          #7289da
+        ); /* Warna gradient saat hover */
+        transform: translateY(-2px); /* Efek naik sedikit saat hover */
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.3);
+      }
+
+      .btn-custom:active {
+        transform: translateY(0); /* Kembali ke posisi semula saat diklik */
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h3 class="text-center">User Dashboard</h3>
+      <hr />
+      <a href="/dashboard-user/dashboard">Dashboard Home</a>
+      <a href="/dashboard-user/tampilbuku">Data Buku</a>
+      <a href="/dashboard-user/peminjaman">Peminjaman Buku</a>
+      <a href="/logout">Logout</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Navbar -->
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarNav"
+            aria-controls="navbarNav"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarNav">
+            <span class="navbar-text text-light ms-auto">
+              Welcome, &nbsp;<span th:text="${username}"></span>!
+            </span>
+          </div>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <div class="container mt-4">
+        <h1 class="text-center">Peminjaman Buku</h1>
+        <p class="text-center">Silakan pilih buku yang ingin Anda pinjam.</p>
+
+        <div th:if="${error}" class="alert alert-danger">
+          <p th:text="${error}"></p>
+        </div>
+
+        <div class="row mt-4">
+          <div class="col-md-12">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title text-center">Formulir Peminjaman</h5>
+                <form action="/borrow" method="POST" th:object="${borrow}">
+                  <div class="mb-3">
+                    <label for="buku" class="form-label">Pilih Buku</label>
+                    <select
+                      id="buku"
+                      name="buku"
+                      class="form-select"
+                      th:field="*{buku.id}"
+                      required
+                    >
+                      <option
+                        th:each="buku : ${daftarbuku}"
+                        th:value="${buku.id}"
+                        th:text="${buku.judul}"
+                      ></option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="borrowDate" class="form-label"
+                      >Tanggal Peminjaman</label
+                    >
+                    <input
+                      type="date"
+                      id="borrowDate"
+                      name="borrowDate"
+                      class="form-control"
+                      th:field="*{borrowDate}"
+                      required
+                    />
+                  </div>
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-custom">
+                      Pinjam Buku
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tabel Status Peminjaman -->
+        <div class="row mt-5">
+          <h2 class="text-center">Status Peminjaman Anda</h2>
+          <div class="col-md-12">
+            <table class="table table-striped table-bordered">
+              <thead class="table-dark">
+                <tr>
+                  <th>#</th>
+                  <th>Judul Buku</th>
+                  <th>Tanggal Pinjam</th>
+                  <th>Tanggal Kembali</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr th:each="pinjam : ${listPinjaman}">
+                  <td th:text="${pinjam.id}"></td>
+                  <td th:text="${pinjam.buku.judul}"></td>
+                  <td
+                    th:text="${#temporals.format(pinjam.borrowDate, 'dd-MM-yyyy')}"
+                  ></td>
+                  <td
+                    th:text="${pinjam.returnDate != null} ? ${#temporals.format(pinjam.returnDate, 'dd-MM-yyyy')} : '-'"
+                  ></td>
+                  <td th:text="${pinjam.status}"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // SweetAlert untuk pesan sukses
+      document.addEventListener("DOMContentLoaded", function () {
+        const successMessage = "[[${successMessage}]]";
+        if (successMessage) {
+          Swal.fire({
+            title: "Berhasil!",
+            text: successMessage,
+            icon: "success",
+            confirmButtonText: "OK",
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -30,7 +30,6 @@ public class BukuappModel {
 
     @NotBlank(message = "Jenis tidak boleh kosong")
     @Column(name = "jenis")
-    // Created By: Armansyah, M.Kom
     private String jenis;
 
     @Column(name = "kodebuku", unique = true)
@@ -86,7 +85,6 @@ public class BukuappModel {
         return kodebuku;
     }
 
-    // Created By: Armansyah, M.Kom
     public void setKodebuku(String kodebuku) {
         this.kodebuku = kodebuku;
     }
